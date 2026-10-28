@@ -1,0 +1,273 @@
+<h2>Setup: fit the game to your keyboard</h2>
+<p class="subtitle">A short 3-step setup that runs the first time you open the game, and any time later from the SETUP tab. <b>Try it with your real keyboard:</b> click once inside this page, then press keys.</p>
+
+<style>
+.khk{background:linear-gradient(#090320,#3a0b5c);border-radius:8px;padding:18px 20px 22px;color:#e8e6ff;font-family:monospace;position:relative;overflow:hidden}
+.khk::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+.khk h4{margin:0;color:#00f0ff;text-shadow:0 0 8px #00f0ff;letter-spacing:2px;font-size:15px}
+.khk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.khk-dots{display:flex;gap:6px}
+.khk-dot{width:34px;height:6px;border-radius:3px;background:#2a1748}
+.khk-dot.on{background:#ff2fd0;box-shadow:0 0 8px #ff2fd0}
+.khk-q{color:#ffe14d;font-size:14px;margin:0 0 10px}
+.khk-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.khk-lbl{color:#a78bff;font-size:12px;letter-spacing:1px;margin-right:4px;min-width:64px}
+.khk-btn{background:#07000f;color:#e8e6ff;border:1px solid #4a2275;padding:7px 11px;font:600 12px monospace;cursor:pointer;border-radius:3px}
+.khk-btn.on{border-color:#ff2fd0;color:#fff;box-shadow:0 0 10px #ff2fd0}
+.khk-btn small{display:block;font-weight:400;color:#b9b4d9;font-size:10px;margin-top:2px}
+.khk-nav{display:flex;justify-content:space-between;margin-top:14px}
+.khk-next{border-color:#00f0ff;color:#00f0ff;box-shadow:0 0 8px #00f0ff55;font-size:13px;padding:8px 16px}
+.khk-lanes{display:flex;gap:8px;margin:4px 0 12px}
+.khk-lane{flex:1;height:34px;border:2px solid;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;transition:background .15s,box-shadow .15s}
+.khk-info{min-height:18px;color:#ffe14d;font-size:13px}
+.khk-small{color:#b9b4d9;font-size:12px;line-height:1.5;margin:8px 0 0}
+.khk-ring{width:46px;height:46px;border-radius:50%;border:3px solid #ff2fd0;box-shadow:0 0 14px #ff2fd0;opacity:.35}
+.khk-count{font-size:22px;font-weight:700;color:#fff;min-width:110px;text-shadow:0 0 8px #ff2fd0}
+.khk-res{color:#7dff6a;font-size:13px;min-height:18px;margin-top:6px}
+.khk [hidden]{display:none!important}
+.khk-cal{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;max-width:720px;margin:4px 0 10px}
+.khk-cal input[type=range]{width:100%;accent-color:#ff2fd0}
+.khk-val{color:#fff;font-size:12px;min-width:48px;text-align:right}
+#khk-wrap{overflow:hidden;position:relative;border-top:1px dashed #4a227588;border-bottom:1px dashed #4a227588;padding:6px 0}
+#khk-svg{position:relative;display:block}
+#khk:fullscreen{overflow:auto;border-radius:0;padding:24px 0}
+#khk:fullscreen > :not(#khk-board){margin-left:24px;margin-right:24px}
+#khk:fullscreen #khk-board .khk-row{margin-left:24px;margin-right:24px}
+</style>
+
+<div class="khk" id="khk">
+  <div class="khk-top"><h4 id="khk-title">SETUP 1/3 · LINE UP YOUR KEYBOARD</h4><div class="khk-dots"><div class="khk-dot"></div><div class="khk-dot"></div><div class="khk-dot"></div></div></div>
+
+  <!-- step 1 -->
+  <div data-step="1">
+    <p class="khk-q" hidden></p>
+    <div class="khk-row" id="khk-shapes" hidden><span class="khk-lbl">SHAPE</span></div>
+    <div class="khk-row" id="khk-layouts" hidden><span class="khk-lbl">LAYOUT</span></div>
+    
+    <p class="khk-q" style="margin-bottom:6px">Line it up: slide the drawing until each key sits right above the same key on your real keyboard.</p>
+    <div class="khk-cal">
+      <span class="khk-lbl">POSITION</span><input type="range" id="khk-pos" min="-50" max="50" step="0.5" value="0"><span class="khk-val" id="khk-posv">0</span>
+      <span class="khk-lbl">SIZE</span><input type="range" id="khk-size" min="40" max="160" step="0.5" value="100"><span class="khk-val" id="khk-sizev">100%</span>
+    </div>
+    <div class="khk-row">
+      <button class="khk-btn" id="khk-fs">⛶ FULL SCREEN</button>
+      <button class="khk-btn" id="khk-reset">↺ RESET</button>
+      <span class="khk-small" style="margin:0">Keyboard only: <b>← →</b> move · <b>↑ ↓</b> resize · hold <b>Shift</b> for big steps. Press <b>`</b> and <b>⌫</b> to light up the two ends and line them up.</span>
+    </div>
+  </div>
+
+  <!-- step 2 -->
+  <div data-step="2" hidden>
+    <p class="khk-q">Press keys to see which lane each one hits. Click a key to switch it off if it's awkward to reach.</p>
+    <div class="khk-row" id="khk-levels"><span class="khk-lbl">LEVEL</span></div>
+    <div class="khk-lanes" id="khk-lanes"></div>
+  </div>
+
+  <!-- keyboard drawing: shown in steps 1 and 2 -->
+  <div id="khk-board">
+    <div id="khk-wrap"><svg id="khk-svg"></svg></div>
+    <div class="khk-row" style="margin-top:10px;justify-content:space-between">
+      <div class="khk-info" id="khk-info">Press any key…</div>
+      <span class="khk-lbl" id="khk-tested" style="text-align:right"></span>
+    </div>
+  </div>
+
+  <!-- step 3 -->
+  <div data-step="3" hidden>
+    <p class="khk-q">Timing check: tap along to the clicks so the notes line up with what you hear.</p>
+    <div class="khk-row" style="gap:16px">
+      <button class="khk-btn" id="khk-tstart">▶ START</button>
+      <div class="khk-ring" id="khk-ring"></div>
+      <div class="khk-count" id="khk-count"></div>
+    </div>
+    <svg id="khk-scale" viewBox="0 0 600 60" width="100%" style="display:block;max-width:640px"></svg>
+    <div class="khk-res" id="khk-res">You'll hear 4 count-in clicks, then 12 more. Tap any play key on each of the 12. The game measures how late your speakers and fingers are, and shifts the notes to match.</div>
+  </div>
+
+  <div class="khk-nav">
+    <button class="khk-btn" id="khk-back">◀ BACK</button>
+    <button class="khk-btn khk-next" id="khk-next">NEXT ▶</button>
+  </div>
+</div>
+
+<div class="section" style="margin-top:1.2rem">
+  <p class="label">My calls, tell me if any are wrong</p>
+  <ul class="subtitle" style="margin-top:4px;line-height:1.6">
+    <li>The <b>numpad, arrows, F-keys and nav keys</b> are drawn so the picture matches your keyboard, but they're never used for playing. Only the main block plays, split in the gap between <b>G and H</b>.</li>
+    <li>Levels: <b>1 = 2 lanes, 2 = 3, 3 = 4, 4 = 5, 5 = 6</b>.</li>
+    <li>Keys are matched by where they physically sit, so any language layout works.</li>
+    <li><b>Line-up</b> is saved as a fraction of your screen width, so it holds whenever the game runs full screen on that monitor. The game shows it full screen, and this page is narrower, so use FULL SCREEN to try it for real.</li>
+    <li>Setup is saved. You can rerun it from the SETUP tab, and you only need to redo the timing check if you switch speakers or headphones.</li>
+  </ul>
+</div>
+
+<script>
+(function(){
+const LC=['#00f0ff','#ff2fd0','#ffe14d','#7dff6a','#ff8a3d','#a78bff'];
+const HAND_SPLIT=6.9, MAIN_W=15;
+let shape='full', iso=false, level=1, step=1, keys=[], byCode={};
+const disabled=new Set(), tested=new Set(), pressed=new Set();
+const $=id=>document.getElementById(id);
+const svg=$('khk-svg'), info=$('khk-info');
+/* line-up calibration: drawing width and centre offset, as fractions of the board area */
+const cal={pos:0,size:1};
+function applyCal(){cal.pos=Math.max(-0.5,Math.min(0.5,cal.pos));cal.size=Math.max(0.4,Math.min(1.6,cal.size));
+ svg.style.width=(cal.size*100)+'%';svg.style.left=(((1-cal.size)/2+cal.pos)*100)+'%';
+ $('khk-pos').value=cal.pos*100;$('khk-size').value=cal.size*100;
+ $('khk-posv').textContent=(cal.pos>0?'+':'')+(cal.pos*100).toFixed(1);$('khk-sizev').textContent=(cal.size*100).toFixed(1)+'%';}
+$('khk-pos').oninput=e=>{cal.pos=e.target.value/100;applyCal();};
+$('khk-size').oninput=e=>{cal.size=e.target.value/100;applyCal();};
+$('khk-reset').onclick=e=>{e.target.blur();cal.pos=0;cal.size=1;applyCal();};
+$('khk-fs').onclick=e=>{e.target.blur();const p=$('khk');document.fullscreenElement?document.exitFullscreen():p.requestFullscreen&&p.requestFullscreen();};
+document.addEventListener('fullscreenchange',()=>{$('khk-fs').textContent=document.fullscreenElement?'✕ EXIT FULL SCREEN':'⛶ FULL SCREEN';});
+const NUDGE={ArrowLeft:['pos',-1],ArrowRight:['pos',1],ArrowUp:['size',1],ArrowDown:['size',-1]};
+
+function layout(){
+ const O=1, out=[];
+ const add=(code,label,x,y,w=1,h=1,off=false,main=false)=>out.push({code,label,x,y,w,h,off,main});
+ // F-row (never used; Esc = pause)
+ add('Escape','Esc',0,0,1,1,O);
+ [['F1',2],['F2',3],['F3',4],['F4',5],['F5',6.5],['F6',7.5],['F7',8.5],['F8',9.5],['F9',11],['F10',12],['F11',13],['F12',14]].forEach(([c,x])=>add(c,c,x,0,1,1,O));
+ // main block
+ const r0=[['Backquote','`'],['Digit1','1'],['Digit2','2'],['Digit3','3'],['Digit4','4'],['Digit5','5'],['Digit6','6'],['Digit7','7'],['Digit8','8'],['Digit9','9'],['Digit0','0'],['Minus','-'],['Equal','='],['Backspace','⌫',2]];
+ const r1=[['Tab','Tab',1.5],['KeyQ','Q'],['KeyW','W'],['KeyE','E'],['KeyR','R'],['KeyT','T'],['KeyY','Y'],['KeyU','U'],['KeyI','I'],['KeyO','O'],['KeyP','P'],['BracketLeft','['],['BracketRight',']']].concat(iso?[['Enter','Enter',1.5]]:[['Backslash','\\',1.5]]);
+ const r2=[['CapsLock','Caps',1.75,O],['KeyA','A'],['KeyS','S'],['KeyD','D'],['KeyF','F'],['KeyG','G'],['KeyH','H'],['KeyJ','J'],['KeyK','K'],['KeyL','L'],['Semicolon',';'],['Quote',"'"]].concat(iso?[['Backslash','#'],['Enter','↵',1.25]]:[['Enter','Enter',2.25]]);
+ const r3=(iso?[['ShiftLeft','Shift',1.25],['IntlBackslash','<']]:[['ShiftLeft','Shift',2.25]]).concat([['KeyZ','Z'],['KeyX','X'],['KeyC','C'],['KeyV','V'],['KeyB','B'],['KeyN','N'],['KeyM','M'],['Comma',','],['Period','.'],['Slash','/'],['ShiftRight','Shift',2.75]]);
+ const r4=[['ControlLeft','Ctrl',1.25,O],['MetaLeft','Win',1.25,O],['AltLeft','Alt',1.25,O],['Space','space',6.25,O],['AltRight','Alt',1.25,O],['MetaRight','Win',1.25,O],['ContextMenu','Menu',1.25,O],['ControlRight','Ctrl',1.25,O]];
+ [r0,r1,r2,r3,r4].forEach((row,ri)=>{let x=0;for(const [code,label,w=1,off] of row){add(code,label,x,1.5+ri,w,1,!!off,true);x+=w;}});
+ if(shape!=='laptop'){
+  const N=15.5;
+  [['PrintScreen','PrtSc'],['ScrollLock','ScrLk'],['Pause','Pause']].forEach(([c,l],i)=>add(c,l,N+i,0,1,1,O));
+  [['Insert','Ins'],['Home','Home'],['PageUp','PgUp']].forEach(([c,l],i)=>add(c,l,N+i,1.5,1,1,O));
+  [['Delete','Del'],['End','End'],['PageDown','PgDn']].forEach(([c,l],i)=>add(c,l,N+i,2.5,1,1,O));
+  add('ArrowUp','↑',N+1,4.5,1,1,O);
+  [['ArrowLeft','←'],['ArrowDown','↓'],['ArrowRight','→']].forEach(([c,l],i)=>add(c,l,N+i,5.5,1,1,O));
+ }
+ if(shape==='full'){
+  const P=19;
+  [['NumLock','Num'],['NumpadDivide','/'],['NumpadMultiply','*'],['NumpadSubtract','-']].forEach(([c,l],i)=>add(c,l,P+i,1.5,1,1,O));
+  [['Numpad7','7'],['Numpad8','8'],['Numpad9','9']].forEach(([c,l],i)=>add(c,l,P+i,2.5,1,1,O));add('NumpadAdd','+',P+3,2.5,1,2,O);
+  [['Numpad4','4'],['Numpad5','5'],['Numpad6','6']].forEach(([c,l],i)=>add(c,l,P+i,3.5,1,1,O));
+  [['Numpad1','1'],['Numpad2','2'],['Numpad3','3']].forEach(([c,l],i)=>add(c,l,P+i,4.5,1,1,O));add('NumpadEnter','Ent',P+3,4.5,1,2,O);
+  add('Numpad0','0',P,5.5,2,1,O);add('NumpadDecimal','.',P+2,5.5,1,1,O);
+ }
+ return out;}
+function totalW(){return shape==='full'?23:shape==='tkl'?18.5:15;}
+
+function build(){
+ keys=layout();byCode={};
+ for(const k of keys){const e=byCode[k.code]||(byCode[k.code]={sum:0,n:0,off:k.off,label:''});e.sum+=k.x+k.w/2;e.n++;if(k.label)e.label=k.label;}
+ for(const c in byCode)byCode[c].cx=byCode[c].sum/byCode[c].n;
+ svg.setAttribute('viewBox','0 0 '+totalW()*100+' 650');
+ [...$('khk-shapes').querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===shape));
+ [...$('khk-layouts').querySelectorAll('button')].forEach(b=>b.classList.toggle('on',(b.dataset.v==='iso')===iso));
+ render();}
+
+function lanes(){return level+1;}
+function laneOf(cx){const n=lanes();const u=cx<HAND_SPLIT?0.5*cx/HAND_SPLIT:0.5+0.5*(cx-HAND_SPLIT)/(MAIN_W-HAND_SPLIT);return Math.max(0,Math.min(n-1,Math.floor(u*n)));}
+function playable(code){const k=byCode[code];return k&&!k.off&&!disabled.has(code);}
+const esc=s=>s.replace('&','&amp;').replace('<','&lt;');
+
+function render(){
+ let s='<defs><filter id="khk-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+ if(shape==='full')s+='<text x="2100" y="140" text-anchor="middle" font-family="monospace" font-size="26" fill="#6b6385" letter-spacing="3">NOT USED</text>';
+ for(const k of keys){
+  const st=byCode[k.code];const x=k.x*100+5,y=k.y*100+5,w=k.w*100-10,h=k.h*100-10;
+  const on=pressed.has(k.code)&&!st.off&&!disabled.has(k.code);
+  let fill,stroke,tcol,extra='';
+  if(st.off){fill='#120c1c';stroke=pressed.has(k.code)?'#8a80a8':'#2a2238';tcol='#4c4560';}
+  else if(disabled.has(k.code)){fill='#120c1c';stroke='#5a2a3a';tcol='#6b5560';extra='<line x1="'+(x+12)+'" y1="'+(y+h-12)+'" x2="'+(x+w-12)+'" y2="'+(y+12)+'" stroke="#ff4d6d" stroke-width="4" opacity=".7"/>';}
+  else{const c=step===2?LC[laneOf(st.cx)]:'#00f0ff';fill=on?c:c+'22';stroke=on?'#fff':c+(tested.has(k.code)&&step===2?'ff':'88');tcol=on?'#07000f':c;}
+  const lbl=k.label||'';const fs=lbl.length>3?20:lbl.length>1?24:34;
+  s+='<g data-code="'+k.code+'" style="cursor:'+(st.off?'default':'pointer')+'"'+(on?' filter="url(#khk-glow)"':'')+'><rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="12" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(on?5:3)+'"/>'+
+   '<text x="'+(x+w/2)+'" y="'+(y+h/2+fs*0.35)+'" text-anchor="middle" font-family="monospace" font-weight="700" font-size="'+fs+'" fill="'+tcol+'">'+esc(lbl)+'</text>'+extra+'</g>';
+ }
+ svg.innerHTML=s;
+ const n=lanes(),lanesEl=$('khk-lanes');
+ if(lanesEl.children.length!==n){lanesEl.innerHTML='';for(let i=0;i<n;i++){const d=document.createElement('div');d.className='khk-lane';d.style.borderColor=LC[i];d.style.color=LC[i];d.textContent='LANE '+(i+1);lanesEl.appendChild(d);}}
+ const total=Object.keys(byCode).filter(playable).length,t=[...tested].filter(playable).length;
+ $('khk-tested').textContent=step===2?'KEYS TESTED '+t+'/'+total:'';
+}
+function flashLane(i){const el=$('khk-lanes').children[i];if(!el)return;el.style.background=LC[i];el.style.color='#07000f';el.style.boxShadow='0 0 18px '+LC[i];
+ clearTimeout(el._t);el._t=setTimeout(()=>{el.style.background='';el.style.color=LC[i];el.style.boxShadow='';},170);}
+
+/* step 1 controls */
+[['full','FULL SIZE','with numpad'],['tkl','NO NUMPAD','arrows + nav keys'],['laptop','LAPTOP / COMPACT','main keys only']].forEach(([v,t,sub])=>{
+ const b=document.createElement('button');b.className='khk-btn';b.dataset.v=v;b.innerHTML=t+'<small>'+sub+'</small>';
+ b.onclick=()=>{shape=v;b.blur();build();};$('khk-shapes').appendChild(b);});
+[['ansi','ANSI','wide Enter, long left Shift'],['iso','ISO','tall Enter, extra key by left Shift']].forEach(([v,t,sub])=>{
+ const b=document.createElement('button');b.className='khk-btn';b.dataset.v=v;b.innerHTML=t+'<small>'+sub+'</small>';
+ b.onclick=()=>{iso=v==='iso';b.blur();build();};$('khk-layouts').appendChild(b);});
+/* step 2 controls */
+const lv=$('khk-levels');
+for(let L=1;L<=5;L++){const b=document.createElement('button');b.className='khk-btn'+(L===level?' on':'');b.textContent='L'+L+' · '+(L+1)+' lanes';
+ b.onclick=()=>{level=L;[...lv.querySelectorAll('button')].forEach(x=>x.classList.remove('on'));b.classList.add('on');b.blur();render();info.textContent='Level '+L+': '+(L+1)+' lanes. Press keys to see where each one lands.';};lv.appendChild(b);}
+svg.addEventListener('click',e=>{if(step!==2)return;const g=e.target.closest('g[data-code]');if(!g)return;const c=g.dataset.code;if(byCode[c].off)return;
+ disabled.has(c)?disabled.delete(c):disabled.add(c);render();info.textContent=(byCode[c].label||c)+(disabled.has(c)?' switched OFF':' switched back ON');});
+
+/* wizard */
+const TITLES=['LINE UP YOUR KEYBOARD','TEST YOUR LANES','TIMING'];
+function go(n){step=n;document.querySelectorAll('#khk [data-step]').forEach(d=>d.hidden=+d.dataset.step!==n);
+ $('khk-board').hidden=n===3;$('khk-title').textContent='SETUP '+n+'/3 · '+TITLES[n-1];
+ [...document.querySelectorAll('.khk-dot')].forEach((d,i)=>d.classList.toggle('on',i<n));
+ $('khk-back').style.visibility=n>1?'visible':'hidden';$('khk-next').textContent=n<3?'NEXT ▶':'✔ DONE · SAVE';
+ info.textContent=n===1?'Press any key…':'Press keys to see which lane each one hits.';render();}
+$('khk-next').onclick=e=>{e.target.blur();if(step<3)go(step+1);else{$('khk-res').style.color='#7dff6a';$('khk-res').textContent='Saved! In the real game this takes you to the Songs tab.';}};
+$('khk-back').onclick=e=>{e.target.blur();if(step>1)go(step-1);};
+
+window.addEventListener('keydown',e=>{
+ if(e.ctrlKey||e.metaKey||e.altKey)return;
+ if(step===1&&NUDGE[e.code]&&!(e.target&&e.target.type==='range')){e.preventDefault();const [k,d]=NUDGE[e.code];cal[k]+=d*(e.shiftKey?0.02:0.0025);applyCal();
+  info.textContent=k==='pos'?'Moved '+(d<0?'left':'right'):'Made '+(d>0?'bigger':'smaller');return;}
+ const isF=/^F\d+$/.test(e.code)||e.code==='Escape';
+ if(!isF&&(byCode[e.code]||e.code.startsWith('Numpad')||e.code==='Space'||e.code==='IntlBackslash'))e.preventDefault();
+ if(e.repeat)return;
+ if((e.code.startsWith('Numpad')||e.code==='NumLock')&&shape!=='full'){shape='full';build();info.textContent='Numpad detected: switched to FULL SIZE. The numpad is not used for playing.';return;}
+ if(e.code==='IntlBackslash'&&!iso){iso=true;build();info.textContent='ISO keyboard detected (extra key next to left Shift). Layout updated.';}
+ if(step===3){if(T.running&&playable(e.code))timingTap(e);return;}
+ const k=byCode[e.code];
+ if(!k){info.textContent=(e.code||e.key)+' is not on this keyboard drawing';return;}
+ pressed.add(e.code);setTimeout(()=>{pressed.delete(e.code);render();},170);
+ if(k.off){info.textContent=(k.label||e.code)+' is not used for playing'+(e.code==='Escape'?' (Esc pauses the game)':'');render();return;}
+ if(disabled.has(e.code)){info.textContent=(k.label||e.code)+' is switched off (click it to switch it back on)';render();return;}
+ if(step===1){info.textContent=(k.label||e.code)+' works ✔';render();return;}
+ tested.add(e.code);const ln=laneOf(k.cx);flashLane(ln);
+ info.textContent=(k.label||e.code)+'  →  lane '+(ln+1)+' of '+lanes();render();
+});
+
+/* timing check */
+const T={running:false,beats:[],taps:[],actx:null};
+const BEAT=0.6,LEAD=4,COUNT=12;
+const ring=$('khk-ring'),count=$('khk-count'),res=$('khk-res'),scale=$('khk-scale');
+function click(t,accent){const a=T.actx,o=a.createOscillator(),g=a.createGain();o.type='square';o.frequency.value=accent?1760:880;
+ g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.25,t+0.003);g.gain.exponentialRampToValueAtTime(0.0001,t+0.07);o.connect(g).connect(a.destination);o.start(t);o.stop(t+0.09);}
+$('khk-tstart').onclick=e=>{e.target.blur();
+ if(!T.actx)T.actx=new (window.AudioContext||window.webkitAudioContext)();T.actx.resume();
+ const t0=T.actx.currentTime+0.5;T.beats=[];for(let i=0;i<LEAD+COUNT;i++){const t=t0+i*BEAT;T.beats.push(t);click(t,i%4===0);}
+ T.taps=[];T.running=true;drawScale();res.style.color='#ffe14d';res.textContent='Listen… start tapping when the count reaches TAP.';};
+function ctxTime(e){const a=T.actx;const ts=a.getOutputTimestamp?a.getOutputTimestamp():null;
+ if(ts&&ts.contextTime>0&&ts.performanceTime>0)return ts.contextTime+(e.timeStamp-ts.performanceTime)/1000;
+ return a.currentTime-(performance.now()-e.timeStamp)/1000;}
+function timingTap(e){const t=ctxTime(e);let best=null;for(let i=LEAD;i<T.beats.length;i++){const d=t-T.beats[i];if(Math.abs(d)<0.3&&(best===null||Math.abs(d)<Math.abs(best)))best=d;}
+ if(best!==null){T.taps.push(best*1000);drawScale();}}
+function median(a){const s=[...a].sort((x,y)=>x-y);const m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2;}
+function drawScale(){let s='<line x1="20" y1="30" x2="580" y2="30" stroke="#4a2275" stroke-width="2"/>';
+ for(const ms of [-200,-100,0,100,200]){const x=300+ms*1.3;s+='<line x1="'+x+'" y1="22" x2="'+x+'" y2="38" stroke="'+(ms?'#4a2275':'#fff')+'" stroke-width="2"/><text x="'+x+'" y="56" fill="#b9b4d9" font-size="11" font-family="monospace" text-anchor="middle">'+(ms>0?'+':'')+ms+' ms</text>';}
+ s+='<text x="20" y="14" fill="#b9b4d9" font-size="11" font-family="monospace">EARLY</text><text x="580" y="14" fill="#b9b4d9" font-size="11" font-family="monospace" text-anchor="end">LATE</text>';
+ for(const ms of T.taps){const x=300+Math.max(-220,Math.min(220,ms))*1.3;s+='<line x1="'+x+'" y1="16" x2="'+x+'" y2="44" stroke="#00f0ff" stroke-width="3" opacity=".8"/>';}
+ if(!T.running&&T.taps.length>=4){const m=median(T.taps);const x=300+Math.max(-220,Math.min(220,m))*1.3;s+='<line x1="'+x+'" y1="10" x2="'+x+'" y2="50" stroke="#7dff6a" stroke-width="4"/>';}
+ scale.innerHTML=s;}
+function finish(){T.running=false;ring.style.opacity=.35;ring.style.transform='';count.textContent='';
+ if(T.taps.length<4){res.style.color='#ff8a3d';res.textContent='Only '+T.taps.length+' taps caught. Press START and try again.';drawScale();return;}
+ const m=median(T.taps);const dev=median(T.taps.map(x=>Math.abs(x-m)));
+ res.style.color='#7dff6a';res.textContent='Your offset: '+(m>=0?'+':'')+Math.round(m)+' ms (spread ±'+Math.round(dev)+' ms, '+T.taps.length+' taps). '+(Math.abs(m)<15?'Spot on. No correction needed.':'The game will move every note by '+Math.round(Math.abs(m))+' ms to match.');
+ drawScale();}
+function tick(){if(T.running){const cur=T.actx.currentTime;const last=T.beats[T.beats.length-1];
+  if(cur>last+0.45)finish();else{let idx=-1;for(let i=0;i<T.beats.length;i++)if(T.beats[i]<=cur)idx=i;
+   const ph=idx<0?1:Math.min(1,(cur-T.beats[idx])/BEAT);ring.style.transform='scale('+(1.3-0.3*ph)+')';ring.style.opacity=String(1-0.65*ph);
+   count.textContent=idx<0?'…':idx<LEAD?String(LEAD-idx):'TAP '+(idx-LEAD+1)+'/'+COUNT;}}
+ requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+build();go(1);drawScale();applyCal();
+})();
+</script>

@@ -1,0 +1,13 @@
+# Python caches and local environment
+__pycache__/
+*.py[cod]
+.venv/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+# Brainstorm mockup server state (local port + auth token)
+.superpowers/
